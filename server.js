@@ -8,7 +8,7 @@ const app = express();
 const eventRoutes = require("./routes/eventRoutes");
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://eventhunt.taniyakamboj.info"],
     methods: ["GET", "POST"],
     credentials: true,
   })
