@@ -1,7 +1,6 @@
 const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 puppeteer.use(StealthPlugin());
-const path = require("path");
 async function autoScroll(page) {
   await page.evaluate(async () => {
     await new Promise((resolve) => {
@@ -19,22 +18,10 @@ async function autoScroll(page) {
     });
   });
 }
-const chromePath =
-  process.env.PUPPETEER_EXECUTABLE_PATH ||
-  path.join(
-    process.env.HOME || "/opt/render",
-    ".cache",
-    "puppeteer",
-    "chrome",
-    "linux-136.0.7103.94",
-    "chrome-linux64",
-    "chrome"
-  );
 
 async function scrapeTicketekSydney() {
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: chromePath,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
