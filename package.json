@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "postinstall": "node install-puppeteer.js",
-    "start": "node server.js",
-    "build": "npm install --unsafe-perm=true --allow-root"
+    "start": "node server.js"
   },
   "author": "taniya kamboj",
   "license": "ISC",
