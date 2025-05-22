@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: concert-backend
+    env: node
+    buildCommand: |
+      npm install
+      npx puppeteer browsers install chrome
+    startCommand: |
+      PUPPETEER_EXECUTABLE_PATH=$(npx puppeteer browsers path chrome) node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    buildFilter:
+      paths:
+        - backend/**
+    plan: free
+    autoDeploy: true
