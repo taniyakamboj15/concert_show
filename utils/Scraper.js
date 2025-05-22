@@ -69,7 +69,7 @@ async function scrapeTicketekSydney() {
 
       await safeGoto(page, url, {
         waitUntil: "domcontentloaded",
-        timeout: 45000,
+        timeout: 85000,
       });
 
       await autoScroll(page);
