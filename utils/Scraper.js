@@ -23,7 +23,8 @@ async function autoScroll(page) {
 async function scrapeTicketekSydney() {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox"],
+    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   const page = await browser.newPage();
