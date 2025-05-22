@@ -21,7 +21,7 @@ async function autoScroll(page) {
   });
 }
 
-async function safeGoto(page, url, options, retries = 3) {
+async function safeGoto(page, url, options, retries = 5) {
   for (let i = 0; i < retries; i++) {
     try {
       console.log(`Navigating to ${url} (Attempt ${i + 1})`);
@@ -56,7 +56,7 @@ async function scrapeTicketekSydney() {
     }
   });
 
-  await page.setDefaultNavigationTimeout(45000);
+  await page.setDefaultNavigationTimeout(85000);
 
   let currentPage = 1;
   let hasNextPage = true;
