@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "postinstall": "npx puppeteer browsers install chrome",
-    "start": "PUPPETEER_EXECUTABLE_PATH=$(npx puppeteer browsers path chrome) node server.js"
+    "start": " node server.js"
   },
   "author": "taniya kamboj",
   "license": "ISC",
