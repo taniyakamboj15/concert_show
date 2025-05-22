@@ -21,6 +21,10 @@ async function autoScroll(page) {
   });
 }
 
+async function delay(ms) {
+  return new Promise((res) => setTimeout(res, ms));
+}
+
 async function safeGoto(page, url, options, retries = 5) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -30,19 +34,30 @@ async function safeGoto(page, url, options, retries = 5) {
     } catch (err) {
       console.warn(`Retry ${i + 1} failed: ${err.message}`);
       if (i === retries - 1) throw err;
+      await delay(2000); // wait before retry
     }
   }
 }
 
-async function scrapeTicketekSydney() {
-  const browser = await puppeteer.launch({
+async function launchBrowser() {
+  return puppeteer.launch({
     headless: chromium.headless,
-    args: chromium.args,
+    args: [
+      ...chromium.args,
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+    ],
     executablePath: await chromium.executablePath(),
     ignoreHTTPSErrors: true,
   });
+}
 
-  const page = await browser.newPage();
+async function scrapeTicketekSydney() {
+  let browser = await launchBrowser();
+  let page = await browser.newPage();
+
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
   );
@@ -65,7 +80,7 @@ async function scrapeTicketekSydney() {
   try {
     while (hasNextPage) {
       const url = `https://premier.ticketek.com.au/shows/genre.aspx?c=2048&k=Sydney&page=${currentPage}`;
-      console.log(`Scraping page ${currentPage} - ${url}`);
+      console.log(`📄 Scraping page ${currentPage} - ${url}`);
 
       await safeGoto(page, url, {
         waitUntil: "domcontentloaded",
@@ -150,9 +165,49 @@ async function scrapeTicketekSydney() {
         return urlParams.get("page");
       });
 
+      //  Restart page every 5 pages
+      if (currentPage % 5 === 0) {
+        await page.close();
+        page = await browser.newPage();
+        await page.setUserAgent(
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        );
+        await page.setRequestInterception(true);
+        page.on("request", (req) => {
+          if (["image", "stylesheet", "font"].includes(req.resourceType())) {
+            req.abort();
+          } else {
+            req.continue();
+          }
+        });
+        await page.setDefaultNavigationTimeout(85000);
+      }
+
+      //  Restart browser every 10 pages
+      if (currentPage % 10 === 0) {
+        await page.close();
+        await browser.close();
+        browser = await launchBrowser();
+        page = await browser.newPage();
+        await page.setUserAgent(
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        );
+        await page.setRequestInterception(true);
+        page.on("request", (req) => {
+          if (["image", "stylesheet", "font"].includes(req.resourceType())) {
+            req.abort();
+          } else {
+            req.continue();
+          }
+        });
+        await page.setDefaultNavigationTimeout(85000);
+      }
+
+      //  Move to next page or break
       if (nextPageNumber && Number(nextPageNumber) > currentPage) {
         currentPage = Number(nextPageNumber);
         hasNextPage = true;
+        await delay(2000); // wait before next page
       } else {
         hasNextPage = false;
       }
@@ -165,10 +220,10 @@ async function scrapeTicketekSydney() {
     console.log(`✅ Scraped total ${uniqueEvents.length} unique events.`);
     return uniqueEvents;
   } catch (err) {
-    console.error("Scraping failed:", err.message);
+    console.error("❌ Scraping failed:", err.message);
     return [];
   } finally {
-    await browser.close();
+    if (browser) await browser.close();
   }
 }
 
