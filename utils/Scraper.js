@@ -80,10 +80,10 @@ async function scrapeTicketekSydney() {
               const month = months[parts[2]];
               const year = parseInt(parts[3], 10);
               if (!isNaN(day) && month !== undefined && !isNaN(year)) {
-                return new Date(year, month, day).toISOString(); // better to store ISO string
+                return new Date(year, month, day).toISOString();
               }
             }
-            return null; // Invalid date returns null
+            return null;
           }
 
           let date = null;
@@ -92,7 +92,6 @@ async function scrapeTicketekSydney() {
             date = parseCustomDate(dateText);
           }
 
-          // If date is still invalid or empty object, force null
           if (!date || typeof date !== "string") {
             date = null;
           }

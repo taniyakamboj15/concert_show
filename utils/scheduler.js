@@ -13,8 +13,6 @@ async function updateEvents() {
   }
 }
 
-// Run every 6 hours
 cron.schedule("0 */6 * * *", updateEvents);
 
-// Initial run
 updateEvents();

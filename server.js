@@ -3,7 +3,6 @@ const dbConnect = require("./config/dbConfig");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("./utils/scheduler");
-const Event = require("./models/Event");
 const app = express();
 // const UserEmail = require("./models/UserEmail");
 const eventRoutes = require("./routes/eventRoutes");
@@ -25,7 +24,6 @@ app.use("/api", eventRoutes);
 //   const userEmail = new UserEmail({ email, link });
 //   await userEmail.save();
 
-//   // Optional: Save to DB or send email
 //   res.json({ redirect_url: link });
 // });
 app.get("/", (req, res) => {
