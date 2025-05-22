@@ -8,8 +8,8 @@ services:
     startCommand: |
       PUPPETEER_EXECUTABLE_PATH=$(npx puppeteer browsers path chrome) node server.js
     envVars:
-      - key: NODE_ENV
-        value: production
+      - key: HOME
+        value: /opt/render
     buildFilter:
       paths:
         - backend/**
