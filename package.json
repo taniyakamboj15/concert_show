@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "postinstall": "npx puppeteer browsers install chrome",
-    "start": " node server.js"
+    "postinstall": "node install-puppeteer.js",
+    "start": "node server.js",
+    "build": "npm install --unsafe-perm=true --allow-root"
   },
   "author": "taniya kamboj",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@sparticuz/chromium": "^133.0.0",
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",
     "cheerio": "^1.0.0",
